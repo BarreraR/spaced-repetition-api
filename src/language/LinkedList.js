@@ -23,16 +23,20 @@ class LinkedList {
 
   checkGuess(guess){
     if(this.head.value.translation === guess) {
-      this.head.value.correct_count++;
-      console.log(this.head.value.memory_value, 'before')
-      this.head.value.memory_value*2;
-      console.log(this.head.value.memory_value, 'after')
+
+      this.head.value.correct_count+=1
+      this.head.value.memory_value*=2
+
       const head = this.shiftWord(this.head.value.memory_value)
+
       return { correct: true, head }
     } else {
-      this.head.value.incorrect_count--;
+
+      this.head.value.incorrect_count+=1
       this.head.value.memory_value = 1
+
       const head = this.shiftWord(this.head.value.memory_value)
+
       return { correct: false, head }  
     }
   }
