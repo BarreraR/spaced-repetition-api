@@ -85,9 +85,21 @@ languageRouter
       const list = new LinkedList
       list.makeLinkedList(words)
 
-      console.log(list.checkGuess(guess), 'teeeeeeeeeeeeeeeeeeest')
+      const guessRes = list.checkGuess(guess)
+      
+      const tempScore= guessRes.correct
+        ? req.language.total_score++
+        : req.language.total_score
+        // make this to update database 
 
-      res.send('implement me!')
+      res.json({
+        answer: guessRes.answer,
+        isCorrect: guessRes.correct,
+        nextWord: guessRes.head.original, // fix this
+        totalScore: tempScore, // fix this
+        wordCorrectCount: guessRes.head.correct_count,
+        wordIncorrectCount: guessRes.head.incorrect_count,
+      })
 
     } catch (error) {
       next(error)

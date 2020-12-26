@@ -22,7 +22,8 @@ class LinkedList {
   }
 
   checkGuess(guess){
-    if(this.head.value.translation === guess) {
+    const answer = this.head.value.translation
+    if(answer === guess) {
 
       this.head.value.correct_count+=1
       this.head.value.memory_value*=2
@@ -37,7 +38,7 @@ class LinkedList {
 
       const head = this.shiftWord(this.head.value.memory_value)
 
-      return { correct: false, head }  
+      return { correct: false, head, answer }  
     }
   }
 
