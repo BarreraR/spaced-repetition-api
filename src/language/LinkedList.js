@@ -21,17 +21,36 @@ class LinkedList {
     return this.head
   }
 
-  checkGuess(word, guess){
+  checkGuess(guess){
     if(this.head.value.translation === guess) {
       this.head.value.correct_count++;
       console.log(this.head.value.memory_value, 'before')
       this.head.value.memory_value*2;
       console.log(this.head.value.memory_value, 'after')
-      
+      const head = this.shiftWord(this.head.value.memory_value)
+      return { correct: true, head }
     } else {
       this.head.value.incorrect_count--;
       this.head.value.memory_value = 1
+      const head = this.shiftWord(this.head.value.memory_value)
+      return { correct: false, head }  
     }
+  }
+
+  shiftWord(shifts){
+    if(this.head.next === null) return
+
+    let current = this.head
+
+    while(shifts > 0 && current.next){
+      current = current.next
+      shifts--
+    }
+
+    current.next = new _Node(this.head.value, current.next)
+    this.head = this.head.next
+
+    return this.head.value
   }
 
 }
