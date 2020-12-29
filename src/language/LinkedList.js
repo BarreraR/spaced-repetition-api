@@ -7,57 +7,62 @@ class _Node {
 
 class LinkedList {
   constructor(){
-    this.head = null;
+    this.head = null
   }
 
-  makeLinkedList(words){
-    this.head = new _Node(words[0], null)  
-    let currentNode = this.head
-    for(let i = 1; i< words.length; i++){
-      currentNode.next = new _Node(words[i], null)
-      currentNode = currentNode.next
-    }
-
-    return this.head
-  }
-
-  checkGuess(guess){
-    const answer = this.head.value.translation
-    if(answer === guess) {
-
-      this.head.value.correct_count+=1
-      this.head.value.memory_value*=2
-
-      const head = this.shiftWord(this.head.value.memory_value)
-
-      return { correct: true, head }
-    } else {
-
-      this.head.value.incorrect_count+=1
-      this.head.value.memory_value = 1
-
-      const head = this.shiftWord(this.head.value.memory_value)
-
-      return { correct: false, head, answer }  
-    }
-  }
-
-  shiftWord(shifts){
-    if(this.head.next === null) return
+  populateList(words, head){
+    this.insertLast(words[head-1])
 
     let current = this.head
-
-    while(shifts > 0 && current.next){
+    for(let i = 1; i<words.length; i++){
+      this.insertLast(words[current.value.next - 1])
       current = current.next
-      shifts--
     }
-
-    current.next = new _Node(this.head.value, current.next)
-    this.head = this.head.next
-
-    return this.head.value
+  }
+  insertFirst(item) {
+    this.head = new _Node(item, this.head);
   }
 
+  insertLast(item) {
+    if (this.head === null) {
+        this.insertFirst(item)
+    }
+    else {
+        let tempNode = this.head;
+        while (tempNode.next !== null) {
+            tempNode = tempNode.next;
+        }
+        tempNode.next = new _Node(item, null);
+    }
+  }
+
+  moveHead(pos){
+    let current = this.head
+
+    while(pos > 0 && current.next){
+      current = current.next
+      pos--;
+    }
+
+    this.head.value.next = current.next ? current.next.value.id : null
+    current.value.next = this.head.value.id
+    current.next = new _Node(this.head.value, current.next)
+    this.head = this.head.next
+    return {
+      old_head: current.next.value,
+      updated_node: current.value,
+      new_head_id: this.head.value.id 
+    }
+  }
+
+  printList(){
+    let current = this.head
+    while(current.next){
+      console.log(current.value)
+      current = current.next
+    }
+    console.log('This is my shifted link list')
+  }
 }
 
 module.exports = LinkedList

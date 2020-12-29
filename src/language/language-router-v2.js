@@ -79,59 +79,65 @@ languageRouter
       })
 
     try {
-      let words = await LanguageService.getLanguageWords(
+
+      const words = await LanguageService.getLanguageWords(
         req.app.get('db'),
         req.language.id,
       )  
 
-      let list = new LinkedList()
-      list.populateList(words, req.language.head)
-
-      let head = list.head.value
-      let answer = head.translation === guess
-      let score = req.language.total_score
-
-      if (answer){
-        head.memory_value*=2
-        head.correct_count+=1
-        score++
-      } else {
-        head.memory_value=1
-        head.incorrect_count+=1
-      }
-      let data = list.moveHead(head.memory_value)
-
+      const list = new LinkedList
+      
+      list.makeLinkedList(words, req.language.head)
+      const guessRes = list.checkGuess(guess)
       // list.printList()
+      console.log(guessRes.data.new_head.id, guessRes.data.new_head.next)
+
+      let score = guessRes.correct ? req.language.total_score++ : req.language.total_score
+
       await LanguageService.updateLanguage(
         req.app.get('db'),
         req.language.id,
-        data.new_head_id,
-        score
+        score,
+        guessRes.data.new_head.id
       )
 
-      await LanguageService.updateWords(
+      // const language = await LanguageService.getUsersLanguage(
+      //   req.app.get('db'),
+      //   req.user.id,
+      // )
+
+      // console.log(language)
+
+
+      const head = await LanguageService.updateWords(
         req.app.get('db'),
-        head, 
-        data
+        guessRes.data
       )
 
-      let word = await LanguageService.getLanguageHead(
-        req.app.get('db'),
-        req.language.id,
-        data.new_head_id
-      )
+      // console.log(words, 'head')
 
-      console.log(await LanguageService.getUsersLanguage(
-        req.app.get('db'),
-        req.user.id,
-      ))
+      // const word = await LanguageService.getLanguageHead(
+      //   req.app.get('db'),
+      //   req.language.id,
+      //   req.language.head
+      // )
+
+      // console.log(word)
+      // // list.printId()
+      // // console.log(guessRes.data.new_head.id)
+
+      //   console.log(guessRes.correct)
+      //   console.log(tempScore, 'tempscore')
+      //     console.log('head is ' + req.language.head, guessRes.data.new_head.id)
+      //   // make this to update database 
+      
       res.json({
-        answer: head.translation,
-        isCorrect: answer,
-        nextWord: word.original, // fix this
+        answer: guessRes.data.old_head.translation,
+        isCorrect: guessRes.correct,
+        nextWord: guessRes.data.old_head.original, // fix this
         totalScore: score, // fix this
-        wordCorrectCount: word.correct_count,
-        wordIncorrectCount: word.incorrect_count,
+        wordCorrectCount: guessRes.data.old_head.correct_count,
+        wordIncorrectCount: guessRes.data.old_head.incorrect_count,
       })
     } catch (error) {
       next(error)
