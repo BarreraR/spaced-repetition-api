@@ -88,7 +88,7 @@ languageRouter
       list.populateList(words, req.language.head)
 
       let head = list.head.value
-      let answer = head.translation === guess
+      let answer = head.translation === guess.toLowerCase()
       let score = req.language.total_score
 
       if (answer){
