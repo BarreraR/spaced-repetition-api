@@ -121,10 +121,6 @@ languageRouter
         data.new_head_id
       )
 
-      console.log(await LanguageService.getUsersLanguage(
-        req.app.get('db'),
-        req.user.id,
-      ))
       res.json({
         answer: head.translation,
         isCorrect: answer,

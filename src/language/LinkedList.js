@@ -11,11 +11,11 @@ class LinkedList {
   }
 
   populateList(words, head){
-    this.insertLast(words[head-1])
+    this.insertLast(words[head % words.length - 1])
 
     let current = this.head
     for(let i = 1; i<words.length; i++){
-      this.insertLast(words[current.value.next - 1])
+      this.insertLast(words[current.value.next % words.length - 1])
       current = current.next
     }
   }
